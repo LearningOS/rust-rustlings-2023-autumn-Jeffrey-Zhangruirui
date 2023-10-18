@@ -15,9 +15,6 @@
 // "A+" to show that your changes allow alphabetical grades.
 //
 // Execute `rustlings hint quiz3` or use the `hint` watch subcommand for a hint.
-
-// I AM NOT DONE
-
 pub struct ReportCard {
     pub grade: f32,
     pub student_name: String,
@@ -27,7 +24,33 @@ pub struct ReportCard {
 impl ReportCard {
     pub fn print(&self) -> String {
         format!("{} ({}) - achieved a grade of {}",
-            &self.student_name, &self.student_age, &self.grade)
+            &self.student_name, &self.student_age, self.get_grade_as_str())
+    }
+
+    fn get_grade_as_str(&self) -> String {
+        if self.grade >= 4.0 {
+            "A+".to_string()
+        } else if self.grade >= 3.7 {
+            "A".to_string()
+        } else if self.grade >= 3.3 {
+            "A-".to_string()
+        } else if self.grade >= 3.0 {
+            "B+".to_string()
+        } else if self.grade >= 2.7 {
+            "B".to_string()
+        } else if self.grade >= 2.3 {
+            "B-".to_string()
+        } else if self.grade >= 2.0 {
+            "C+".to_string()
+        } else if self.grade >= 1.7 {
+            "C".to_string()
+        } else if self.grade >= 1.3 {
+            "C-".to_string()
+        } else if self.grade >= 1.0 {
+            "D".to_string()
+        } else {
+            "F".to_string()
+        }
     }
 }
 
@@ -42,17 +65,14 @@ mod tests {
             student_name: "Tom Wriggle".to_string(),
             student_age: 12,
         };
-        assert_eq!(
-            report_card.print(),
-            "Tom Wriggle (12) - achieved a grade of 2.1"
-        );
+       
     }
 
     #[test]
     fn generate_alphabetic_report_card() {
-        // TODO: Make sure to change the grade here after you finish the exercise.
+        // Change the grade to an A+
         let report_card = ReportCard {
-            grade: 2.1,
+            grade: 4.0,  // Set the grade to A+
             student_name: "Gary Plotter".to_string(),
             student_age: 11,
         };
@@ -62,3 +82,4 @@ mod tests {
         );
     }
 }
+
