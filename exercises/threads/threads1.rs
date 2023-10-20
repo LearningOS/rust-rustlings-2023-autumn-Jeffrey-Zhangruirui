@@ -26,11 +26,11 @@ fn main() {
 
     let mut results: Vec<u128> = vec![];
     for handle in handles {
-        // TODO: a struct is returned from thread::spawn, can you use it?
+        results.push(handle.join().unwrap()); // 等待线程完成并获取返回值
     }
 
     if results.len() != 10 {
-        panic!("Oh no! All the spawned threads did not finish!");
+        panic!("Oh no! Not all spawned threads finished!");
     }
 
     println!();
@@ -38,3 +38,4 @@ fn main() {
         println!("thread {} took {}ms", i, result);
     }
 }
+

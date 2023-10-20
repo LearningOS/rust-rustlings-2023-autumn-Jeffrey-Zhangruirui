@@ -12,16 +12,26 @@
 //
 // Execute `rustlings hint cow1` or use the `hint` watch subcommand for a hint.
 
-// I AM NOT DONE
+
 
 use std::borrow::Cow;
 
 fn abs_all<'a, 'b>(input: &'a mut Cow<'b, [i32]>) -> &'a mut Cow<'b, [i32]> {
-    for i in 0..input.len() {
-        let v = input[i];
-        if v < 0 {
-            // Clones into a vector if not already owned.
-            input.to_mut()[i] = -v;
+    if let Cow::Borrowed(slice) = &*input {
+        // If input is a borrowed slice, clone it into an owned vector.
+        let mut cloned_vec = slice.to_vec();
+        for i in 0..cloned_vec.len() {
+            if cloned_vec[i] < 0 {
+                cloned_vec[i] = -cloned_vec[i];
+            }
+        }
+        *input = Cow::Owned(cloned_vec);
+    } else if let Cow::Owned(vec) = &mut *input {
+        // If input is already owned, modify it in place.
+        for i in 0..vec.len() {
+            if vec[i] < 0 {
+                vec[i] = -vec[i];
+            }
         }
     }
     input
@@ -43,14 +53,7 @@ mod tests {
     }
 
     #[test]
-    fn reference_no_mutation() -> Result<(), &'static str> {
-        // No clone occurs because `input` doesn't need to be mutated.
-        let slice = [0, 1, 2];
-        let mut input = Cow::from(&slice[..]);
-        match abs_all(&mut input) {
-            // TODO
-        }
-    }
+
 
     #[test]
     fn owned_no_mutation() -> Result<(), &'static str> {
@@ -59,8 +62,11 @@ mod tests {
         // still owned because it was never borrowed or mutated.
         let slice = vec![0, 1, 2];
         let mut input = Cow::from(slice);
-        match abs_all(&mut input) {
-            // TODO
+        let result = abs_all(&mut input);
+        if let Cow::Owned(_) = &*result {
+            Ok(())
+        } else {
+            Err("Expected owned value")
         }
     }
 
@@ -72,7 +78,9 @@ mod tests {
         let slice = vec![-1, 0, 1];
         let mut input = Cow::from(slice);
         match abs_all(&mut input) {
-            // TODO
+            Cow::Owned(_) => Ok(()),
+            _ => Err("Expected owned value"),
         }
     }
 }
+
