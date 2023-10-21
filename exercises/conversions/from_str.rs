@@ -8,9 +8,9 @@
 //
 // Execute `rustlings hint from_str` or use the `hint` watch subcommand for a
 // hint.
-
 use std::num::ParseIntError;
 use std::str::FromStr;
+use std::str::SplitWhitespace;
 
 #[derive(Debug, PartialEq)]
 struct Person {
@@ -29,6 +29,35 @@ enum ParsePersonError {
     NoName,
     // Wrapped error from parse::<usize>()
     ParseInt(ParseIntError),
+}
+
+impl FromStr for Person {
+    type Err = ParsePersonError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut parts = s.split_whitespace();
+
+        let name = parts.next().ok_or(ParsePersonError::BadLen)?;
+        let age_str = parts.next().ok_or(ParsePersonError::BadLen)?;
+
+        if parts.next().is_some() {
+            return Err(ParsePersonError::BadLen);
+        }
+
+        if name.is_empty() {
+            return Err(ParsePersonError::NoName);
+        }
+
+        let age = age_str
+            .parse()
+            .map_err(|e| ParsePersonError::ParseInt(e))?;
+
+        Ok(Person {
+            name: name.to_string(),
+            age,
+        })
+    }
+    
 }
 
 
